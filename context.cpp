@@ -12,33 +12,33 @@ namespace Glamour {
 
 	void* Context::errout() 
 	{
-		if(stdscreen) {
-			if(stdscreen->win){
-				delwin(stdscreen->win);
-			}
-			delete stdscreen;
+		XWindow* stdscr;
+		if(getstdscr()) {
+			stdscr = stdscreen.release();
+			delete stdscr;
 			return nullptr;
 		} else {
 			return nullptr;
 		}
-
 	}
 
 	XWindow* Context::start(int cflags)
 	{
 		int status;
 
-		XWindow* stdscr = new XWindow();
+		XWindow* stdscr = nullptr;
+		stdscreen = std::unique_ptr<XWindow>(new XWindow());
 
-		this->flags = cflags;
+		stdscr = stdscreen.get();
+
+		flags = cflags;
 
 		if(!(stdscr->win = initscr()))
 		{
+			stdscreen.release();
 			delete stdscr;
 			return nullptr;
 		}
-
-		this->stdscreen = stdscr;
 
 		if(cflags & BREAK) {
 			if((status = cbreak()) != OK) {
@@ -79,9 +79,17 @@ namespace Glamour {
 				return (XWindow *)errout();
 			}				
 		}
-
+		if (cflags & KEYPAD_STDSCR) {
+			if((status = keypad(stdscr->win, TRUE)) != OK) {
+				return (XWindow *)errout();
+			}				
+		}		
 		return stdscr;
 
+	}
+	XWindow* Context::getstdscr()
+	{
+		return stdscreen.get();
 	}
 	XWindow* Context::createWin(int x, int y, int width, int height) 
 	{
@@ -129,8 +137,10 @@ namespace Glamour {
 
 	int Context::end() 
 	{
+		XWindow* stdscr;
 		int status;
-		deleteWindow(stdscreen);
+		stdscr = stdscreen.release();
+		delete stdscr;
 		status = endwin();
 		return status;
 
