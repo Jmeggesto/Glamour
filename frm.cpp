@@ -8,7 +8,7 @@
 #include <mach/mach.h>
 #endif
 
-namespace Glamour {
+namespace glamour {
 
 	void current_utc_time(struct timespec *ts) {
 
@@ -28,22 +28,19 @@ namespace Glamour {
 
 	FrameRateManager::FrameRateManager() {}
 
-	FrameRateManager::FrameRateManager(int fps) : framerate(fps)
-	{
+	FrameRateManager::FrameRateManager(int fps) : framerate(fps) {
 
 		framelength = (double) 1 / fps;
 		t_measurer = new struct timespec;		
 		state = Executing;
 
 	}
-	FrameRateManager::~FrameRateManager()
-	{
+	FrameRateManager::~FrameRateManager() {
 		if(t_measurer){
 			delete t_measurer;
 		}
 	}	
-	int FrameRateManager::mark()
-	{
+	int FrameRateManager::mark() {
 		if(state == Executing) {
 			startframe();
 			state = Calculating;
@@ -56,32 +53,28 @@ namespace Glamour {
 
 	}
 
-	void FrameRateManager::startframe()
-	{
+	void FrameRateManager::startframe() {
 		current_utc_time(t_measurer);
 		mark_start = t_measurer->tv_nsec / 1000;
 		
 	}
-	void FrameRateManager::endframe()
-	{
+	void FrameRateManager::endframe() {
 		current_utc_time(t_measurer);
 		mark_end = t_measurer->tv_nsec / 1000;
 		framecount++;
 	}
 
-	void FrameRateManager::calculateFrame()
-	{
+	void FrameRateManager::calculateFrame() {
 		frame_diff = mark_end - mark_start;
 		int framelength_long = (int)(framelength * 1000000);
 		delay_time = framelength_long - frame_diff;
 	}
 
-	int FrameRateManager::pad()
-	{
+	int FrameRateManager::pad() {
 		if(state == Executing && delay_time > 0){
 			usleep(delay_time);
 		}
 		return 1;
 	}
 
-}
+} // namespace glamour

@@ -3,57 +3,75 @@
 #ifndef XWINDOW_H_   /* Include guard */
 #define XWINDOW_H_
 
-namespace Glamour {
+namespace glamour {
 
-	enum window_direction {
-		
-		NONE = 0,
-		UP = 1,
-		DOWN = 2,
-		LEFT = 4,
-		RIGHT = 8,
+  	struct Rect {
+    	double x, y;
+    	int width, height;
 
-		DIAGONAL_UPRIGHT = 9,
-		DIAGONAL_UPLEFT = 5,
-		DIAGONAL_DOWNRIGHT = 10,
-		DIAGONAL_DOWNLEFT = 6
+    	// returns y-coord value for top edge
+    	double top();
 
-	};
+    	// returns y-coord value for bottom edge
+    	double bottom();
 
-	const char* windirstr(enum window_direction direction);
+    	// returns x-coord value for left edge
+    	double left();
+
+    	// returns x-coord value for right edge
+    	double right();
+
+  	};
+
+  	Rect* RectMake(double x, double y, int width, int height);
 
 	class XWindow {
 	public:
 
 		XWindow();
+		XWindow(double x, double y, int width, int height);
 		~XWindow();
 
+		// the ncurses WINDOW structure that 
+		// XWindow provides an API for interacting with.
 		WINDOW* win = nullptr;
 
-		double x;
-		double y;
+		double getX();
+		double getY();
 
-		int height;
-		int width;
+		int getWidth();
+		int getHeight();
 
-		// cardinal direction and speed along
-		// that direction of motion 
-		enum window_direction direction;
-		int speed;
+		void setVelocity(double x, double y);
 
-		// representations of speed along the 
-		// x and y axis, respectively
-		double vel_x;
-		double vel_y;
+		double getXVelocity();
+		double getYVelocity();
 
-		int standardBox(); // boxes the window with standard lines
-		int makebox(chtype verch, chtype horch); // boxes the window with custom characters/flags
+		// boxes the window with standard lines
+		int standardBox(); 
 
-		int translate(double x, double y);
-		int moveWindow(enum window_direction dir, int value);
+		// boxes the window with custom characters/flags
+		int makebox(chtype verch, chtype horch); 
+
+		// floating-point translation with respect to X and Y axes
+		int translate(double x, double y); 
+
+		// Continue moving the window 
+		// with the direction/magnitude
+		// indicated by its x and y velocity
+		int autoTranslate();
+
+		//move the window directly to a new coordinate
 		int moveWindow(int newx, int newy);
 
+		// clears out the window. 
+		// call this before refresh.
 		int clear();
+
+		// calls wnoutrefresh on the 
+		// window's `win` member. must 
+		// be called after any alterations
+		// to the window itself.
 		int refresh();
 
 		int addString(const char *string);
@@ -67,8 +85,12 @@ namespace Glamour {
     	// moves and refreshes `win`. Used in 
     	// all public move functions.
     	int curses_mvwin(int newx, int newy);
+    	Rect* rect = nullptr;
+
+    	double vel_x = 0.0;
+    	double vel_y = 0.0;
 
 	};
-}
+} // namespace glamour
 
 #endif // XWINDOW_H_

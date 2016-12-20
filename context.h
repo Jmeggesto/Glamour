@@ -1,12 +1,14 @@
 #include "xwindow.h"
+
 #include <stdlib.h>
+
 #include <vector>
 #include <memory>
 
 #ifndef CONTEXT_H_
 #define CONTEXT_H_
 
-namespace Glamour {
+namespace glamour {
 
 
 	enum context_flags {
@@ -44,10 +46,9 @@ namespace Glamour {
 	private:
 
 		std::vector<std::unique_ptr<XWindow>> windows;
-
 		void* errout();
 
 	};
-}
+} // namespace glamour
 
 #endif

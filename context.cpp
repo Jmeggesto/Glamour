@@ -1,17 +1,15 @@
 #include "context.h"
 #include <stdlib.h>
 
-namespace Glamour {
+namespace glamour {
 
 	Context::Context() { }
 
-	Context::~Context() 
-	{
+	Context::~Context() {
 		windows.clear();
 	}
 
-	void* Context::errout() 
-	{
+	void* Context::errout() {
 		XWindow* stdscr;
 		if(getstdscr()) {
 			stdscr = stdscreen.release();
@@ -22,8 +20,7 @@ namespace Glamour {
 		}
 	}
 
-	XWindow* Context::start(int cflags)
-	{
+	XWindow* Context::start(int cflags) {
 		int status;
 
 		XWindow* stdscr = nullptr;
@@ -85,33 +82,24 @@ namespace Glamour {
 			}				
 		}		
 		return stdscr;
-
 	}
-	XWindow* Context::getstdscr()
-	{
+
+	XWindow* Context::getstdscr() {
 		return stdscreen.get();
 	}
-	XWindow* Context::createWin(int x, int y, int width, int height) 
-	{
+
+	XWindow* Context::createWin(int x, int y, int width, int height)  {
 
 		XWindow* newWindow;
 
-		windows.push_back(std::unique_ptr<XWindow>(new XWindow()));
+		windows.push_back(std::unique_ptr<XWindow>(new XWindow(x,y,width,height)));
 		newWindow = windows.back().get();
-
-		newWindow->x = x;
-		newWindow->y = y;
-		newWindow->width = width;
-		newWindow->height = height;
-		newWindow->direction = NONE;
-		newWindow->speed = 0;
 
 		newWindow->win = newwin(height,width,y,x);
 		return newWindow;
 	}
 
-	int Context::deleteWindow(XWindow* window) 
-	{
+	int Context::deleteWindow(XWindow* window) {
 		int status;
 		if(window) 
 		{
@@ -125,25 +113,20 @@ namespace Glamour {
 			return ERR;
 		}
 		return status;
-
 	}
 
-	int Context::update() 
-	{
+	int Context::update() {
 		int status;
 		status = doupdate();
 		return status;
 	}
 
-	int Context::end() 
-	{
+	int Context::end() {
+
 		XWindow* stdscr;
-		int status;
 		stdscr = stdscreen.release();
 		delete stdscr;
-		status = endwin();
-		return status;
-
+		return endwin();
 	}
 
-}
+} // namespace glamour

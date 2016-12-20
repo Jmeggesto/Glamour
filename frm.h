@@ -2,10 +2,10 @@
 #define FRM_H_
 
 #include <sys/time.h>
+
 #include <functional>
 
-namespace Glamour {
-
+namespace glamour {
 
 	class FrameRateManager {
 	public:
@@ -20,10 +20,8 @@ namespace Glamour {
 		FrameRateManager(int fps);
 		~FrameRateManager();
 
-		template<typename F, typename C> void update(const F& function, const C& condition)
-		{
+		template<typename F, typename C> void update(const F& function, const C& condition) {
 			int gamestatus;
-
 			while(condition() == true) {
 				mark();
 				if((gamestatus = function(framelength)) == -1) {
@@ -33,8 +31,6 @@ namespace Glamour {
 				pad();
 			}
 		}
-		int mark();
-		int pad();
 
 	private:
 		// frames per second
@@ -57,11 +53,14 @@ namespace Glamour {
 		// difference (in microseconds) between end of frame and start of frame
 		long frame_diff = 0; 
 
+		int mark();
+		int pad();
+
 		void startframe();
 		void endframe();
 		void calculateFrame();
 
 	};
-}
+} // namespace glamour
 
 #endif
