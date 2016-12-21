@@ -16,7 +16,7 @@ namespace glamour {
 		~GameWorld();
 		XWindow* getEntityAt(int xposition, int yposition);
 		int projectileHit(XWindow* window);
-		inline void updateMatrix(XWindow* entity, int x, int y, int width, int height);
+		void updateMatrix(XWindow* entity, int x, int y, int width, int height);
 
 		const char* testfunc();
 

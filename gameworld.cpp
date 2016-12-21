@@ -10,9 +10,9 @@ namespace glamour {
 		height = LINES;
 
 		worldspace.resize(width);
-		for(int i = 0; i < height; i++){
-			worldspace[i].resize(height);
+		for(int i = 0; i < width; i++){
 			worldspace[i] = std::vector<XWindow*>(height, nullptr);
+			worldspace[i].resize(height);
 		}
 
 	}
@@ -36,16 +36,14 @@ namespace glamour {
 			return -1;
 		}
 	}
-	inline void GameWorld::updateMatrix(XWindow* entity, int x, int y, int width, int height) {
+	void GameWorld::updateMatrix(XWindow* entity, int x, int y, int width, int height) {
 		
 		for(int i = x; (i) < (x + width); i ++) {
 			for(int j = y; (j) < (y + height); j++) {
 				worldspace[i][j] = entity;
 			}
 		}
-
 	}
-
 	const char* GameWorld::testfunc() {
 		return "hello, world!";
 	}

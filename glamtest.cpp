@@ -1,7 +1,10 @@
 #include "glamour.h"
 
+#include <unistd.h>
+
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 
 double DeltaTime;
 
@@ -21,12 +24,17 @@ int main() {
 		exit(1);
 	}
 
+	glamour::XWindow* player = context.createWin(0,LINES-3,6,3);
+	player->standardBox();
+
 	glamour::GameWorld world = glamour::GameWorld(mainscreen, context);
-	glamour::EnemyManager enemyManager = glamour::EnemyManager(world, context);
+	glamour::EnemyManager manager = glamour::EnemyManager(world, context);
 
 	nodelay(mainscreen->win, TRUE);
 
 	mainscreen->refresh();
+	player->refresh();
+	manager.refreshEntities();
 	context.update();
 
 	auto condition = [&]() -> bool {
@@ -43,16 +51,32 @@ int main() {
 			case 'q':
 				return -1;
 				break;
+			case 'a':
+				player->translate(-80.0 * DeltaTime, 0);
+				break;
+			case 'd':
+				player->translate(80.0 * DeltaTime, 0);
+				break;
+			case 'e':
+				manager.shoot(player);
+				break;
 			default:
 				break;
 		}
-		//enemyManager.updateEntities(DeltaTime);
+		mainscreen->clear();
+		mainscreen->refresh();
+		player->refresh();
+		player->standardBox();
+		manager.updateEntities(DeltaTime);
+		context.update();
 		return 1;
 	};
 
 	FRM.update(gameloop, condition);
 
 	end:
+
+	fprintf(stderr, "stderr\n");
 
 	context.end();
 
@@ -66,27 +90,3 @@ int getKey() {
 	flushinp();
 	return key;
 }
-/*
-glamour::XWindow* shoot(glamour::XWindow* origin, glamour::Context& spawner) {
-	glamour::XWindow* projectile = nullptr;
-	projectile = spawner.createWin(origin->getX() + (origin->getWidth() / 2), origin->getY() - 2,2,2);
-	projectile->setVelocity(0, -40.0);
-	projectile->standardBox();
-	projectiles++;
-	return projectile;
-}
-glamour::XWindow* calculateProjectile(glamour::XWindow* projectile, glamour::Context& deleter) {	
-	if(!projectile) {
-		return nullptr;
-	}
-	if(projectile->getY() > 0) {
-		projectile->translate(0,projectile->getYVelocity() * DeltaTime);
-	} else {
-		deleter.deleteWindow(projectile);
-		projectile = nullptr;
-		projectiles--;
-		return nullptr;
-	}
-	return projectile;
-}
-*/
