@@ -1,9 +1,14 @@
 #include <ncurses.h>
 
-#ifndef XWINDOW_H_   /* Include guard */
-#define XWINDOW_H_
+#ifndef WINDOW_H_   /* Include guard */
+#define WINDOW_H_
 
 namespace glamour {
+
+
+	enum Justification {
+		Left, Center, Right
+	};
 
   	struct Rect {
     	double x, y;
@@ -23,17 +28,18 @@ namespace glamour {
 
   	};
 
+
   	Rect* RectMake(double x, double y, int width, int height);
 
-	class XWindow {
+	class Window {
 	public:
 
-		XWindow();
-		XWindow(double x, double y, int width, int height);
-		~XWindow();
+		Window();
+		Window(double x, double y, int width, int height);
+		~Window();
 
 		// the ncurses WINDOW structure that 
-		// XWindow provides an API for interacting with.
+		// Window provides an API for interacting with.
 		WINDOW* win = nullptr;
 
 		double getX();
@@ -75,10 +81,8 @@ namespace glamour {
 		int refresh();
 
 		int addString(const char *string);
-		int addNstring(const char *str, int n);
-
+		int addString(const char *string, enum Justification justify, int ypos);
 		int addStringAt(int y, int x, const char *str);
-        int addNStringAt(int x, int y, const char *str, int n);
 
     private:
 
@@ -93,4 +97,4 @@ namespace glamour {
 	};
 } // namespace glamour
 
-#endif // XWINDOW_H_
+#endif // Window_H_

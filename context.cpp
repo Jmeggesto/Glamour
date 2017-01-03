@@ -10,7 +10,7 @@ namespace glamour {
 	}
 
 	void* Context::errout() {
-		XWindow* stdscr;
+		Window* stdscr;
 		if(getstdscr()) {
 			stdscr = stdscreen.release();
 			delete stdscr;
@@ -20,11 +20,11 @@ namespace glamour {
 		}
 	}
 
-	XWindow* Context::start(int cflags) {
+	Window* Context::start(int cflags) {
 		int status;
 
-		XWindow* stdscr = nullptr;
-		stdscreen = std::unique_ptr<XWindow>(new XWindow());
+		Window* stdscr = nullptr;
+		stdscreen = std::unique_ptr<Window>(new Window());
 
 		stdscr = stdscreen.get();
 
@@ -39,67 +39,67 @@ namespace glamour {
 
 		if(cflags & BREAK) {
 			if((status = cbreak()) != OK) {
-				return (XWindow *)errout();
+				return (Window *)errout();
 			}
 		} else {
 			if((status = nocbreak()) != OK) {
-				return (XWindow *)errout();
+				return (Window *)errout();
 			}
 		}
 		if(cflags & ECHO) {
 			if((status = echo()) != OK) {
-				return (XWindow *)errout();
+				return (Window *)errout();
 			}
 		} else {
 			if((status = noecho()) != OK) {
 				
-				return (XWindow *)errout();
+				return (Window *)errout();
 			}
 		}
 		if (cflags & RAW) {
 			if((status = raw()) != OK) {
-				return (XWindow *)errout();
+				return (Window *)errout();
 			}
 		} else {
 			if((status = noraw()) != OK) {
 				
-				return (XWindow *)errout();
+				return (Window *)errout();
 			}
 		}
 		if (cflags & COLOR) {
 			if((status = start_color()) != OK) {
-				return (XWindow *)errout();
+				return (Window *)errout();
 			}
 		}
 		if (cflags & HIDECURSOR) {
 			if((status = curs_set(0)) == ERR) {
-				return (XWindow *)errout();
+				return (Window *)errout();
 			}				
 		}
 		if (cflags & KEYPAD_STDSCR) {
 			if((status = keypad(stdscr->win, TRUE)) != OK) {
-				return (XWindow *)errout();
+				return (Window *)errout();
 			}				
 		}		
 		return stdscr;
 	}
 
-	XWindow* Context::getstdscr() {
+	Window* Context::getstdscr() {
 		return stdscreen.get();
 	}
 
-	XWindow* Context::createWin(int x, int y, int width, int height)  {
+	Window* Context::createWin(int x, int y, int width, int height)  {
 
-		XWindow* newWindow;
+		Window* newWindow;
 
-		windows.push_back(std::unique_ptr<XWindow>(new XWindow(x,y,width,height)));
+		windows.push_back(std::unique_ptr<Window>(new Window(x,y,width,height)));
 		newWindow = windows.back().get();
 
 		newWindow->win = newwin(height,width,y,x);
 		return newWindow;
 	}
 
-	int Context::deleteWindow(XWindow* window) {
+	int Context::deleteWindow(Window* window) {
 		int status;
 		if(window) 
 		{
@@ -123,7 +123,7 @@ namespace glamour {
 
 	int Context::end() {
 
-		XWindow* stdscr;
+		Window* stdscr;
 		stdscr = stdscreen.release();
 		delete stdscr;
 		return endwin();

@@ -3,12 +3,12 @@
 
 namespace glamour {
 
-	EnemyManager::EnemyManager(GameWorld& world, Context& ctxt) : gameWorld(world), factory(ctxt) {
+	EnemyManager::EnemyManager(GameWorld& world, Context& ctxt, Scoreboard& sboard) : gameWorld(world), factory(ctxt), board(sboard) {
 
 		const int rectWidth = (11 * enemy_width) + (10 * enemy_spacingX);
 		const int rectHeight = (enemy_height * 5) + (enemy_spacingY * 4);
 		const int rectX = (gameWorld.width / 2) - (rectWidth / 2);
-		const int rectY = 1;
+		const int rectY = 5;
 
 		rect = RectMake(rectX, rectY, rectWidth, rectHeight);
 
@@ -25,7 +25,7 @@ namespace glamour {
 		entities.clear();
 	}
 
-	void EnemyManager::shoot(XWindow* origin) {
+	void EnemyManager::shoot(Window* origin) {
 		if(!origin){
 			return;
 		}
@@ -50,13 +50,14 @@ namespace glamour {
 
 		if((rect->right() + (x_velocity * delta_time)) > gameWorld.width || (rect->x + (x_velocity * delta_time)) < 0){
 			rect->x = (x_velocity > 0) ? gameWorld.width - rect->width : 0;
-			x_velocity *= -1;
+			x_velocity *= -4.0;
 			y_translation = 1;
 		} else {
 			rect->x += x_velocity * delta_time;
 		}
 		rect->y += y_translation;
 
+		board.update();
 		calculateProjectile(delta_time);
 
 		for(int i = 0; i < entities.size(); i ++ ) {
@@ -89,7 +90,7 @@ namespace glamour {
 			return false;
 		}
 
-		XWindow* en = nullptr;
+		Window* en = nullptr;
 
 		int p_x = (int)projectile->getX();
 		int next_y = ((int)projectile->getY()) + 1;
@@ -98,6 +99,7 @@ namespace glamour {
 			removeEntity(en);
 			projectile->clear();
 			factory.deleteWindow(projectile);
+			board.increaseScore(100);
 			projectile = nullptr;
 			return true;
 		} else {
@@ -105,13 +107,14 @@ namespace glamour {
 		}
 	}
 
-	void EnemyManager::removeEntity(XWindow* entity) {
+	void EnemyManager::removeEntity(Window* entity) {
 		
-		XWindow* en;
+		Window* en;
 
 		for(int i = 0; i < entities.size(); i ++) {
 			if(entities[i] == entity) {
 				en = entities[i];
+				gameWorld.updateMatrix(nullptr, en->getX(), en->getY(), en->getWidth(), en->getHeight());
 				entities.erase(entities.begin() + i);
 				en->clear();
 				factory.deleteWindow(en);

@@ -1,7 +1,7 @@
 #ifndef GAMEWORLD_H_
 #define GAMEWORLD_H_
 
-#include "xwindow.h"
+#include "window.h"
 #include "context.h"
 
 #include <vector>
@@ -12,11 +12,11 @@ namespace glamour {
 
 	public:
 
-		GameWorld(XWindow* scr, Context &context);
+		GameWorld(Window* scr, Context &context);
 		~GameWorld();
-		XWindow* getEntityAt(int xposition, int yposition);
-		int projectileHit(XWindow* window);
-		void updateMatrix(XWindow* entity, int x, int y, int width, int height);
+		Window* getEntityAt(int xposition, int yposition);
+		int projectileHit(Window* window);
+		void updateMatrix(Window* entity, int x, int y, int width, int height);
 
 		const char* testfunc();
 
@@ -25,9 +25,9 @@ namespace glamour {
 
 	private:
 
-		XWindow* screen = nullptr;
+		Window* screen = nullptr;
 
-		std::vector<std::vector<XWindow*>> worldspace;
+		std::vector<std::vector<Window*>> worldspace;
 		Context& factory;
 
 	};

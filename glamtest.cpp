@@ -15,7 +15,7 @@ int main() {
 	glamour::FrameRateManager FRM = glamour::FrameRateManager(60);
 	glamour::Context context;
     
-	glamour::XWindow *mainscreen = context.start(glamour::BREAK | 
+	glamour::Window *mainscreen = context.start(glamour::BREAK | 
 												 glamour::COLOR | 
 												 glamour::HIDECURSOR | 
 												 glamour::KEYPAD_STDSCR);
@@ -24,11 +24,13 @@ int main() {
 		exit(1);
 	}
 
-	glamour::XWindow* player = context.createWin(0,LINES-3,6,3);
+	glamour::Window* player = context.createWin(0,LINES-3,8,3);
 	player->standardBox();
 
+	glamour::Scoreboard scoreboard = glamour::Scoreboard(context);
+
 	glamour::GameWorld world = glamour::GameWorld(mainscreen, context);
-	glamour::EnemyManager manager = glamour::EnemyManager(world, context);
+	glamour::EnemyManager manager = glamour::EnemyManager(world, context, scoreboard);
 
 	nodelay(mainscreen->win, TRUE);
 

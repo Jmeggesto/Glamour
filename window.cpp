@@ -1,5 +1,7 @@
-#include "xwindow.h"
+#include "window.h"
 #include <ncurses.h>
+
+#include <string.h>
 
 namespace glamour {
 
@@ -31,18 +33,18 @@ namespace glamour {
 	}
 
 	///////////////////////
-	// XWINDOW IMPLEMENTATION
+	// Window IMPLEMENTATION
 	//////////////////////
 
 	// CONSTRUCTORS/DESTRUCTORS
 
-	XWindow::XWindow() {}
+	Window::Window() {}
 
-	XWindow::XWindow(double x, double y, int width, int height) {
+	Window::Window(double x, double y, int width, int height) {
 		rect = RectMake(x,y,width,height);
 	}
 
-	XWindow::~XWindow() {
+	Window::~Window() {
 		if(win){
 			delwin(win);
 		}
@@ -53,55 +55,55 @@ namespace glamour {
 
 	// SETTERS/GETTERS
 
-	double XWindow::getX() {
+	double Window::getX() {
 		return rect->x;
 	}
 
-	double XWindow::getY() {
+	double Window::getY() {
 		return rect->y;
 	}
 
-	int XWindow::getWidth() {
+	int Window::getWidth() {
 		return rect->width;
 	}
 
-	int XWindow::getHeight() {
+	int Window::getHeight() {
 		return rect->height;
 	}
 
-	void XWindow::setVelocity(double x, double y) {
+	void Window::setVelocity(double x, double y) {
 		vel_x = x;
 		vel_y = y;
 	}
 
-	double XWindow::getXVelocity() {
+	double Window::getXVelocity() {
 		return vel_x;
 	}
 
-	double XWindow::getYVelocity() {
+	double Window::getYVelocity() {
 		return vel_y;
 	}
 
 	// WINDOW DRAWING/MOVING METHODS
 
-	int XWindow::standardBox() {
+	int Window::standardBox() {
 		int status;
 		status = box(win,0,0);
 		return status;
 	}
 
-	int XWindow::makebox(chtype verch, chtype horch) {
+	int Window::makebox(chtype verch, chtype horch) {
 		int status;
 		status = box(win, verch, horch);
 		return status;
 	}
 
-	int XWindow::curses_mvwin(int newx, int newy) {
+	int Window::curses_mvwin(int newx, int newy) {
 		int status;
 		status = mvwin(win, newy, newx);
 		return status;
 	}
-	int XWindow::translate(double delta_x, double delta_y) {
+	int Window::translate(double delta_x, double delta_y) {
 		int status;
 
 		rect->x += delta_x;
@@ -110,11 +112,11 @@ namespace glamour {
 		return status;
 	}
 
-	int XWindow::autoTranslate() {
+	int Window::autoTranslate() {
 		return translate(vel_x, vel_y);
 	}
 
-	int XWindow::moveWindow(int newx, int newy) {
+	int Window::moveWindow(int newx, int newy) {
 		int status;
 		rect->x = (double)newx;
 		rect->y = (double)newy;
@@ -123,16 +125,40 @@ namespace glamour {
 
 	// WINDOW UPDATE METHODS
 
-	int XWindow::clear() {
+	int Window::clear() {
 		int status;
 		status = werase(win);
 		return status;
 	}
 
-	int XWindow::refresh() {
+	int Window::refresh() {
 		int status;
 		status = wnoutrefresh(win);
 		return status;
+	}
+	int Window::addString(const char *string){
+		int status;
+		status = waddstr(win, string);
+	}
+	int Window::addString(const char *string, enum Justification justify, int ypos){
+		int xpos;
+		switch(justify){
+			case Left:
+				xpos = (int)getX() + 1;
+				break;
+			case Center:
+				xpos = (getWidth() / 2) - (strlen(string) / 2);
+				break;
+			case Right:
+				xpos = (getWidth() - strlen(string)) - 1;
+				break;
+			default:
+				break;
+		}
+		addStringAt(xpos,ypos,string);
+	}
+	int Window::addStringAt(int x, int y, const char *str){
+		mvwaddstr(win,y,x,str);
 	}
 
 } // namespace glamour

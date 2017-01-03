@@ -6,6 +6,7 @@
 #include "enemymanager.h"
 #include "frm.h"
 #include "gameworld.h"
-#include "xwindow.h"
+#include "scoreboard.h"
+#include "window.h"
 
 #endif

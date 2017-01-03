@@ -1,4 +1,4 @@
-#include "xwindow.h"
+#include "window.h"
 
 #include <stdlib.h>
 
@@ -12,7 +12,6 @@ namespace glamour {
 
 
 	enum context_flags {
-
 		BREAK = 1,
 		ECHO = 2,
 		RAW = 4,
@@ -28,16 +27,16 @@ namespace glamour {
 		Context();
 		~Context();
 
-		std::unique_ptr<XWindow> stdscreen;
+		std::unique_ptr<Window> stdscreen;
 
 		int flags;
 
-		XWindow* start(int cflags);
-		XWindow* getstdscr();
+		Window* start(int cflags);
+		Window* getstdscr();
 
-		XWindow* createWin(int x, int y, int width, int height);
+		Window* createWin(int x, int y, int width, int height);
 
-		int deleteWindow(XWindow* window);
+		int deleteWindow(Window* window);
 
 		int update();
 
@@ -45,7 +44,7 @@ namespace glamour {
 
 	private:
 
-		std::vector<std::unique_ptr<XWindow>> windows;
+		std::vector<std::unique_ptr<Window>> windows;
 		void* errout();
 
 	};

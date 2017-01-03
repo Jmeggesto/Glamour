@@ -4,14 +4,14 @@
 
 namespace glamour {
 
-	GameWorld::GameWorld(XWindow* scr, Context& context) : screen(scr), factory(context) {
+	GameWorld::GameWorld(Window* scr, Context& context) : screen(scr), factory(context) {
 
 		width = COLS;
 		height = LINES;
 
 		worldspace.resize(width);
 		for(int i = 0; i < width; i++){
-			worldspace[i] = std::vector<XWindow*>(height, nullptr);
+			worldspace[i] = std::vector<Window*>(height, nullptr);
 			worldspace[i].resize(height);
 		}
 
@@ -19,10 +19,10 @@ namespace glamour {
 	GameWorld::~GameWorld() {
 
 	}
-	XWindow* GameWorld::getEntityAt(int xposition, int yposition) {
+	Window* GameWorld::getEntityAt(int xposition, int yposition) {
 		return worldspace[xposition][yposition];
 	}
-	int GameWorld::projectileHit(XWindow* window){
+	int GameWorld::projectileHit(Window* window){
 
 		if(!window) {
 			return -1;
@@ -36,7 +36,7 @@ namespace glamour {
 			return -1;
 		}
 	}
-	void GameWorld::updateMatrix(XWindow* entity, int x, int y, int width, int height) {
+	void GameWorld::updateMatrix(Window* entity, int x, int y, int width, int height) {
 		
 		for(int i = x; (i) < (x + width); i ++) {
 			for(int j = y; (j) < (y + height); j++) {
